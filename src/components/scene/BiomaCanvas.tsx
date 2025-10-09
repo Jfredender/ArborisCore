@@ -8,7 +8,7 @@ import { Entity } from '../../types';
 import { useClima } from '../../context/ClimaContext';
 import { EfeitosDeClima } from '../effects/EfeitosDeClima';
 
-// Retornamos à nossa lógica de geração procedural de propriedades
+// Função de geração procedural de propriedades
 const generateGeneticProps = (dna: string) => {
   let hash = 0;
   for (let i = 0; i < dna.length; i++) { hash = dna.charCodeAt(i) + ((hash << 5) - hash); }
@@ -18,8 +18,16 @@ const generateGeneticProps = (dna: string) => {
   return { color, detail, rotationSpeed };
 };
 
-// Retornamos ao nosso componente de entidade procedural
-function EntidadeNoBioma({ entity, index, isSelected, onClick, unlockedTech }: { entity: Entity; index: number; isSelected: boolean; onClick: () => void; unlockedTech: string[] }) {
+// Definição explícita dos tipos para as propriedades do componente
+interface EntidadeNoBiomaProps {
+  entity: Entity;
+  index: number;
+  isSelected: boolean;
+  onClick: () => void;
+  unlockedTech: string[];
+}
+
+function EntidadeNoBioma({ entity, index, isSelected, onClick, unlockedTech }: EntidadeNoBiomaProps) {
   const meshRef = useRef<THREE.Mesh>(null!);
   const geneticProps = useMemo(() => generateGeneticProps(entity.dnaCode), [entity.dnaCode]);
 
