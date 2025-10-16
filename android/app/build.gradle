@@ -3,11 +3,11 @@ apply plugin: 'com.google.gms.google-services'
 
 android {
     namespace "ai.arboris.app"
-    compileSdk 35
+    compileSdk 34
     defaultConfig {
         applicationId "ai.arboris.app"
         minSdk 23
-        targetSdk 35
+        targetSdk 34
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -37,11 +37,6 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:1.1.5"
     androidTestImplementation "androidx.test.espresso:espresso-core:3.5.1"
     implementation project(':capacitor-cordova-android-plugins')
-    implementation "androidx.core:core-splashscreen:1.0.1"
-
-    // --- DIRETIVA DE LINKING MANUAL E FORÇADO ---
-    // Esta instrução diz ao nosso módulo 'app' para usar o plugin de autenticação.
-    implementation project(':capacitor-firebase-authentication')
 }
 
 apply from: 'capacitor.build.gradle'
