@@ -1,9 +1,9 @@
-// src/context/AuthContext.tsx
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../firebase';
-// --- IMPORTAÇÃO CORRIGIDA: O TIPO 'SignInWithGoogleResult' FOI REMOVIDO ---
 import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
+// --- NOVA IMPORTAÇÃO DO MUNDO NATIVO PARA O CONTROLO DE ESTADO ---
+import { App as CapacitorApp } from '@capacitor/app';
 
 interface AuthContextType {
   user: User | null;
@@ -19,36 +19,43 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // --- NOVO ESTADO: CONTROLA SE A PONTE NATIVA ESTÁ PRONTA ---
+  const [isNativeReady, setIsNativeReady] = useState(false);
 
   useEffect(() => {
-    const connectionTimeout = setTimeout(() => {
-      if (loading) {
-        console.error("AuthContext Timeout: A conexão com o Firebase não foi estabelecida.");
-        setError("FALHA DE CONEXÃO: Não foi possível comunicar com os servidores de autenticação.");
-        setLoading(false);
-      }
-    }, 10000);
-
+    // Listener do Firebase para o estado do utilizador
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      clearTimeout(connectionTimeout);
       setUser(currentUser);
       setLoading(false);
     });
 
+    // --- PROTOCOLO DE SINCRONIZAÇÃO DE ARRANQUE ---
+    // Ouve o evento 'resume' da aplicação, que só é disparado depois de
+    // a ponte nativa estar totalmente inicializada.
+    CapacitorApp.addListener('appStateChange', (state) => {
+      if (state.isActive) {
+        setIsNativeReady(true);
+      }
+    });
+
+    // Um pequeno truque para plataformas web e para o primeiro arranque
+    setTimeout(() => setIsNativeReady(true), 1000); // 1 segundo de segurança
+
     return () => {
       unsubscribe();
-      clearTimeout(connectionTimeout);
+      CapacitorApp.removeAllListeners();
     };
   }, []);
 
-  // --- LÓGICA DE LOGIN CORRIGIDA: REMOÇÃO DA TIPAGEM OBSOLETA ---
   const loginWithGoogle = async () => {
+    // A função só executa se a ponte nativa estiver pronta
+    if (!isNativeReady) {
+      setError("A plataforma nativa ainda não está pronta. Tente novamente.");
+      return;
+    }
     setError(null);
     try {
-      // A chamada à função permanece a mesma. Apenas removemos a anotação de tipo da variável 'result'.
-      // Como não usamos a variável 'result', podemos simplesmente chamar a função.
       await FirebaseAuthentication.signInWithGoogle();
-      // O 'onAuthStateChanged' irá tratar do sucesso da autenticação.
     } catch (err) {
       console.error("Erro detalhado ao autenticar via Capacitor:", err);
       const errorMessage = typeof err === 'string' ? err : (err instanceof Error ? err.message : "Erro desconhecido durante o login nativo.");
@@ -64,19 +71,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const value = { user, loading, error, loginWithGoogle, logout };
+  // Passamos o novo estado 'isNativeReady' para o valor do contexto
+  const value = { user, loading, error, loginWithGoogle, logout, isNativeReady };
 
-  if (loading) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', fontFamily: "'IBM Plex Mono', monospace", color: 'white', backgroundColor: '#282c34' }}>
-        <p>INICIANDO PROTOCOLOS...</p>
-      </div>
-    );
-  }
-  
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
+// Modificamos o hook 'useAuth' para também devolver o novo estado
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) { throw new Error('useAuth deve ser usado dentro de um AuthProvider'); }
