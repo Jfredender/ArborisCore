@@ -1,3 +1,9 @@
 include ':app'
 include ':capacitor-android'
 include ':capacitor-cordova-android-plugins'
+
+// --- DIRETIVA DE LINKING MANUAL E FORÇADO ---
+// A nossa ferramenta 'npx cap sync' falhou em adicionar esta secção.
+// Esta instrução diz ao Gradle para reconhecer o nosso plugin de autenticação como um sub-projeto.
+include ':capacitor-firebase-authentication'
+project(':capacitor-firebase-authentication').projectDir = new File(rootProject.projectDir, '../node_modules/@capacitor-firebase/authentication/android')
