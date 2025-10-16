@@ -1,6 +1,6 @@
 // src/hooks/useUserData.ts
 import { useState, useEffect } from 'react';
-import { db } from '../services/firebase';
+import { db } from '../firebase';
 import { doc, onSnapshot, serverTimestamp, setDoc } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
 

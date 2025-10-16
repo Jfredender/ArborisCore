@@ -1,11 +1,10 @@
-// src/services/firebase.ts
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-// ESTA É A CONFIGURAÇÃO CANÓNICA, 100% ALINHADA COM A FONTE DA VERDADE FORNECIDA PELO DIRETOR.
+// ESTA É A CONFIGURAÇÃO CANÓNICA, 100% ALINHADA COM A FONTE DA VERDADE
 const firebaseConfig = {
-  apiKey: "AIzaSyDHNpms72pPeoi1b-MFUes8pCvmfC9neEA",
+  apiKey: "AIzaSyDHNpms72pPeoi1b-MFUEs8pCVmfC9neEA",
   authDomain: "arboris-core.firebaseapp.com",
   projectId: "arboris-core",
   storageBucket: "arboris-core.firebasestorage.app",
@@ -14,5 +13,6 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+
 export const auth = getAuth(app);
 export const db = getFirestore(app);

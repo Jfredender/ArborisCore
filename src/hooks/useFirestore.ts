@@ -1,6 +1,6 @@
 // src/hooks/useFirestore.ts
 import { useState, useEffect } from 'react';
-import { db } from '../services/firebase';
+import { db } from '../firebase';
 import { collection, query, onSnapshot, orderBy, DocumentData } from 'firebase/firestore';
 
 // A MÁGICA ESTÁ AQUI: <T extends { id: string }>

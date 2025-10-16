@@ -3,7 +3,7 @@ import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useUserData } from '../hooks/useUserData';
 import { NodeTecnologia, TechNode } from '../components/ui/NodeTecnologia';
-import { db } from '../services/firebase';
+import { db } from '../firebase';
 import { doc, runTransaction, arrayUnion, increment } from 'firebase/firestore';
 import { playSound } from '../services/sound';
 

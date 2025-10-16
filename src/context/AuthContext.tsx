@@ -1,13 +1,15 @@
 // src/context/AuthContext.tsx
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { User, onAuthStateChanged, signOut, signInWithCredential, GoogleAuthProvider } from 'firebase/auth';
-import { auth } from '../services/firebase';
+import { User, onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../firebase';
+// --- IMPORTAÇÃO CORRIGIDA: O TIPO 'SignInWithGoogleResult' FOI REMOVIDO ---
+import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   error: string | null;
-  loginWithGoogleCredential: (idToken: string) => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -19,19 +21,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // --- PROTOCOLO DE VERIFICAÇÃO DE CONEXÃO ---
-    // Inicia um temporizador de segurança de 10 segundos.
     const connectionTimeout = setTimeout(() => {
-      // Se 'loading' ainda for verdadeiro após 10 segundos, a conexão falhou.
       if (loading) {
         console.error("AuthContext Timeout: A conexão com o Firebase não foi estabelecida.");
-        setError("FALHA DE CONEXÃO: Não foi possível comunicar com os servidores de autenticação. Verifique o seu firewall, antivírus ou conexão de rede.");
-        setLoading(false); // Para a tela de "INICIANDO PROTOCOLOS..."
+        setError("FALHA DE CONEXÃO: Não foi possível comunicar com os servidores de autenticação.");
+        setLoading(false);
       }
-    }, 10000); // 10 segundos
+    }, 10000);
 
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      // Se recebermos uma resposta do Firebase, cancelamos o temporizador.
       clearTimeout(connectionTimeout);
       setUser(currentUser);
       setLoading(false);
@@ -41,29 +39,33 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       unsubscribe();
       clearTimeout(connectionTimeout);
     };
-  }, []); // O array vazio garante que isto só executa uma vez.
+  }, []);
 
-  const loginWithGoogleCredential = async (idToken: string) => {
+  // --- LÓGICA DE LOGIN CORRIGIDA: REMOÇÃO DA TIPAGEM OBSOLETA ---
+  const loginWithGoogle = async () => {
     setError(null);
     try {
-      const credential = GoogleAuthProvider.credential(idToken);
-      await signInWithCredential(auth, credential);
+      // A chamada à função permanece a mesma. Apenas removemos a anotação de tipo da variável 'result'.
+      // Como não usamos a variável 'result', podemos simplesmente chamar a função.
+      await FirebaseAuthentication.signInWithGoogle();
+      // O 'onAuthStateChanged' irá tratar do sucesso da autenticação.
     } catch (err) {
-      console.error("Erro detalhado ao autenticar:", err);
-      if (err instanceof Error) { setError(err.message); } 
-      else { setError("Erro desconhecido durante o login."); }
+      console.error("Erro detalhado ao autenticar via Capacitor:", err);
+      const errorMessage = typeof err === 'string' ? err : (err instanceof Error ? err.message : "Erro desconhecido durante o login nativo.");
+      setError(errorMessage);
     }
   };
 
   const logout = async () => {
-    try { await signOut(auth); } 
-    catch (error) { console.error("Erro no logout:", error); }
+    try {
+      await FirebaseAuthentication.signOut();
+    } catch (error) {
+      console.error("Erro no logout nativo:", error);
+    }
   };
 
-  const value = { user, loading, error, loginWithGoogleCredential, logout };
+  const value = { user, loading, error, loginWithGoogle, logout };
 
-  // Se houver um erro de conexão, a LoginView irá exibi-lo.
-  // Se ainda estiver a carregar, exibe a mensagem de inicialização.
   if (loading) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', fontFamily: "'IBM Plex Mono', monospace", color: 'white', backgroundColor: '#282c34' }}>

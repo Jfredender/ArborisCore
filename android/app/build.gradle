@@ -1,0 +1,44 @@
+apply plugin: 'com.android.application'
+
+android {
+    namespace "ai.arboris.app"
+    compileSdk 35
+    defaultConfig {
+        applicationId "ai.arboris.app"
+        minSdk 23
+        targetSdk 35
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+repositories {
+    flatDir{
+        dirs '../capacitor-cordova-android-plugins/src/main/libs'
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "androidx.appcompat:appcompat:1.6.1"
+    implementation project(':capacitor-android')
+    testImplementation "junit:junit:4.13.2"
+    androidTestImplementation "androidx.test.ext:junit:1.1.5"
+    androidTestImplementation "androidx.test.espresso:espresso-core:3.5.1"
+    implementation project(':capacitor-cordova-android-plugins')
+    implementation "androidx.core:core-splashscreen:1.0.1"
+}
+
+apply from: 'capacitor.build.gradle'
+
+// --- DIRETIVA DE IGNIÇÃO FINAL E ABSOLUTA ---
+// Esta instrução, no final do ficheiro, garante que o plugin do Google Services
+// é a última coisa a ser aplicada, após toda a outra configuração.
+apply plugin: 'com.google.gms.google-services'

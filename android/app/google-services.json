@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "537123553346",
+    "project_id": "arboris-core",
+    "storage_bucket": "arboris-core.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:537123553346:android:a2d045e02c70450a1b6ddb",
+        "android_client_info": {
+          "package_name": "ai.arboris.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "537123553346-qr9m4t7oivm791pb1o2i9kfie9qa8jt9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ai.arboris.app",
+            "certificate_hash": "9bbb3186b2189ef16d8f272bdab59362c395cbb4"
+          }
+        },
+        {
+          "client_id": "537123553346-h57ccb82oitbtd5kjok2ot33i9lp2gru.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBzirUfGN7h9VU4ikkRXN_zmKMwSeTSOM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "537123553346-h57ccb82oitbtd5kjok2ot33i9lp2gru.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "537123553346-6luuqnkm1j2dkl6be23dt8fh2c57f967.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.mycompany.arborisai"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:537123553346:android:7cbdb8fc0ad8374e1b6ddb",
+        "android_client_info": {
+          "package_name": "com.mycompany.arborisai"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "537123553346-fh17enb93r7dlrkh8brlokgqu2b19di5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mycompany.arborisai",
+            "certificate_hash": "9bbb3186b2189ef16d8f272bdab59362c395cbb4"
+          }
+        },
+        {
+          "client_id": "537123553346-h57ccb82oitbtd5kjok2ot33i9lp2gru.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBzirUfGN7h9VU4ikkRXN_zmKMwSeTSOM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "537123553346-h57ccb82oitbtd5kjok2ot33i9lp2gru.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "537123553346-6luuqnkm1j2dkl6be23dt8fh2c57f967.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.mycompany.arborisai"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

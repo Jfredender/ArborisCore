@@ -8,7 +8,7 @@ import { getWeatherData } from '../services/weather';
 import { LaminaSafira } from '../components/ui/LaminaSafira';
 import { AnaliseSoloAR } from '../components/ui/AnaliseSoloAR';
 import { analyzeImage } from '../services/vision';
-import { db } from '../services/firebase';
+import { db } from '../firebase';
 import { collection, addDoc, serverTimestamp, doc, runTransaction, increment } from "firebase/firestore";
 import { playSound } from '../services/sound';
 
