@@ -1,15 +1,14 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { User, onAuthStateChanged } from 'firebase/auth';
+import { User, onAuthStateChanged, signOut, signInWithCredential, GoogleAuthProvider } from 'firebase/auth';
 import { auth } from '../firebase';
-import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
-// --- IMPORTAÇÃO CORRIGIDA: REMOÇÃO DO TIPO INTERNO ---
+import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 import { App as CapacitorApp } from '@capacitor/app';
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   error: string | null;
-  isNativeReady: boolean;
+  isNativeReady: boolean; // <-- A PROPRIEDADE CRÍTICA, AGORA PRESENTE
   loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -23,14 +22,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isNativeReady, setIsNativeReady] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    // Inicialização do plugin e listeners
+    GoogleAuth.initialize();
+    
+    const authUnsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setLoading(false);
     });
 
-    // --- LÓGICA ASSÍNCRONA CORRIGIDA E ROBUSTA ---
-    // A função addListener retorna uma Promessa. Guardamos a promessa.
-    const listenerPromise = CapacitorApp.addListener('appStateChange', (state) => {
+    const appStateListener = CapacitorApp.addListener('appStateChange', (state) => {
       if (state.isActive && !isNativeReady) {
         setIsNativeReady(true);
       }
@@ -42,19 +42,42 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     });
 
-    // A função de limpeza agora opera sobre a promessa.
     return () => {
-      unsubscribe();
-      // Quando o componente desmontar, esperamos a promessa ser resolvida
-      // e então chamamos .remove() no 'handle' do listener.
-      listenerPromise.then(listenerHandle => listenerHandle.remove());
+      authUnsubscribe();
+      appStateListener.then(listener => listener.remove());
     };
   }, [isNativeReady]);
 
-  const loginWithGoogle = async () => { /* ... (código inalterado) ... */ };
-  const logout = async () => { /* ... (código inalterado) ... */ };
-  const value = { user, loading, error, isNativeReady, loginWithGoogle, logout };
+  const loginWithGoogle = async () => {
+    if (!isNativeReady) {
+      setError("A plataforma nativa ainda não está pronta. Tente novamente.");
+      return;
+    }
+    setError(null);
+    try {
+      const googleUser = await GoogleAuth.signIn();
+      if (!googleUser.authentication?.idToken) {
+        throw new Error("O token de ID do Google não foi recebido.");
+      }
+      const credential = GoogleAuthProvider.credential(googleUser.authentication.idToken);
+      await signInWithCredential(auth, credential);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Erro desconhecido durante o login.";
+      setError(errorMessage);
+    }
+  };
 
+  const logout = async () => {
+    try {
+      await GoogleAuth.signOut();
+      await signOut(auth);
+    } catch (error) {
+      console.error("Erro no logout:", error);
+    }
+  };
+
+  const value = { user, loading, error, isNativeReady, loginWithGoogle, logout };
+  
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 

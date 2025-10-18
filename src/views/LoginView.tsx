@@ -1,9 +1,19 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
 
-const viewStyle: React.CSSProperties = { /* Estilos da vista */ };
-const panelStyle: React.CSSProperties = { /* Estilos do painel */ };
-const baseButtonStyle: React.CSSProperties = { /* Estilos do botão */ };
+const viewStyle: React.CSSProperties = {
+  display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh',
+  flexDirection: 'column', background: '#1a1a1a', color: 'white', fontFamily: 'monospace'
+};
+const panelStyle: React.CSSProperties = {
+  padding: '2rem', border: '1px solid #00ff99', borderRadius: '8px',
+  background: '#242424', textAlign: 'center', minWidth: '350px'
+};
+const baseButtonStyle: React.CSSProperties = {
+  background: '#4285F4', color: 'white', border: 'none', padding: '10px 24px',
+  borderRadius: '4px', fontSize: '16px', display: 'flex', alignItems: 'center',
+  gap: '12px', margin: '2rem auto 0', transition: 'opacity 0.3s'
+};
 
 export const LoginView = () => {
   const { loginWithGoogle, error, isNativeReady } = useAuth();
