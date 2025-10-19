@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     namespace "ai.arboris.app"
@@ -25,5 +26,9 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "androidx.appcompat:appcompat:1.6.1"
-    implementation "androidx.webkit:webkit:1.4.0" // Boa prática para WebViews
+    implementation "androidx.webkit:webkit:1.4.0"
+    implementation project(':capacitor-android')
+    implementation project(':capacitor-cordova-android-plugins')
+    implementation "androidx.core:core-splashscreen:1.0.1"
+    implementation project(':capacitor-firebase-authentication') // Se o sync o adicionou
 }
