@@ -48,33 +48,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [isNativeReady]);
 
-  const loginWithGoogle = async () => {
-    if (!isNativeReady) {
-      setError("A plataforma nativa ainda não está pronta. Tente novamente.");
-      return;
-    }
-    setError(null);
-    try {
-      const googleUser = await GoogleAuth.signIn();
-      if (!googleUser.authentication?.idToken) {
-        throw new Error("O token de ID do Google não foi recebido.");
-      }
-      const credential = GoogleAuthProvider.credential(googleUser.authentication.idToken);
-      await signInWithCredential(auth, credential);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Erro desconhecido durante o login.";
-      setError(errorMessage);
-    }
-  };
-
-  const logout = async () => {
-    try {
-      await GoogleAuth.signOut();
-      await signOut(auth);
-    } catch (error) {
-      console.error("Erro no logout:", error);
-    }
-  };
+  const loginWithGoogle = async () => { /* ... */ };
+  const logout = async () => { /* ... */ };
 
   const value = { user, loading, error, isNativeReady, loginWithGoogle, logout };
   
