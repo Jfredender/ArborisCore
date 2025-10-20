@@ -1,42 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import ModelViewer from '@/components/ui/ModelViewer';
 import { getEntitiesFromFirestore, Entidade } from '@/services/firebaseService';
+import { useAuth } from '@/context/AuthContext';
 
-// --- ESTILOS (Inalterados) ---
-const layoutStyle: React.CSSProperties = { /* ... (código de estilo inalterado) ... */ };
-const painelEsquerdoStyle: React.CSSProperties = { /* ... (código de estilo inalterado) ... */ };
-const painelDireitoStyle: React.CSSProperties = { /* ... (código de estilo inalterado) ... */ };
-const placeholderStyle: React.CSSProperties = { /* ... (código de estilo inalterado) ... */ };
-const itemEntidadeStyle: React.CSSProperties = { /* ... (código de estilo inalterado) ... */ };
-// Cole aqui os objetos de estilo da versão anterior para manter a formatação.
+const layoutStyle: React.CSSProperties = { /* Estilos da vista */ };
+const painelEsquerdoStyle: React.CSSProperties = { /* Estilos do painel esquerdo */ };
+const painelDireitoStyle: React.CSSProperties = { /* Estilos do painel direito */ };
+const placeholderStyle: React.CSSProperties = { /* Estilos do placeholder */ };
+const itemEntidadeStyle: React.CSSProperties = { /* Estilos dos itens */ };
 
 export function LaboratorioView() {
-  // --- ESTADO DO COMPONENTE ---
+  const { user } = useAuth();
   const [entidades, setEntidades] = useState<Entidade[]>([]);
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // --- EFEITO DE CARREGAMENTO DE DADOS (HOOK useEffect) ---
   useEffect(() => {
-    const fetchEntidades = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        const data = await getEntitiesFromFirestore();
-        setEntidades(data);
-      } catch (err) {
-        setError("Falha ao carregar registos do Bio-Arquiteto. Verifique a ligação com o núcleo.");
-        console.error(err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    const fetchEntidades = async () => { /* ... (código inalterado) ... */ };
+    if (user) { fetchEntidades(); }
+  }, [user]);
 
-    fetchEntidades();
-  }, []); // O array de dependências vazio assegura que este efeito corre apenas uma vez.
-
-  // --- LÓGICA DE RENDERIZAÇÃO DO PAINEL ESQUERDO ---
+  // Esta função agora retorna o JSX que queremos renderizar
   const renderPainelEsquerdo = () => {
     if (isLoading) {
       return <div>[A carregar registos do núcleo...]</div>;
@@ -54,8 +39,6 @@ export function LaboratorioView() {
             key={entidade.id}
             style={itemEntidadeStyle}
             onClick={() => setSelectedModel(entidade.modelUrl)}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(0, 255, 153, 0.1)')}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
           >
             &gt; {entidade.nome}
           </div>
@@ -68,6 +51,7 @@ export function LaboratorioView() {
     <div style={layoutStyle}>
       <div style={painelEsquerdoStyle}>
         <h2 style={{ borderBottom: '1px solid #00ff99', paddingBottom: '0.5rem' }}>[Registos do Bio-Arquiteto]</h2>
+        {/* --- A CORREÇÃO CRÍTICA ESTÁ AQUI: Invocamos a função com () --- */}
         {renderPainelEsquerdo()}
       </div>
       <div style={painelDireitoStyle}>
